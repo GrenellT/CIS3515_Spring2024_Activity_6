@@ -36,17 +36,24 @@ class MainActivity : AppCompatActivity() {
 
 
 /* Convert to RecyclerView.Adapter */
-class TextSizeAdapter (private val textSizes: Array<Int>, callback: (Int)->Unit) : RecyclerView.Adapter<TextSizeAdapter.TextSizeViewHolder>() {
+class TextSizeAdapter (private val textSizes: Array<Int>, _callback: (Int)->Unit) : RecyclerView.Adapter<TextSizeAdapter.TextSizeViewHolder>() {
 
     // TODO Step 1: Complete onClickListener to return selected number
-    inner class TextSizeViewHolder(val textView: TextView) : RecyclerView.ViewHolder (textView) {
+    var callback = _callback
+    inner class TextSizeViewHolder(val textView: TextView, _callback: (Int)->Unit) : RecyclerView.ViewHolder (textView) {
         init {
-            textView.setOnClickListener {  }
+            textView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val selectedTextSize = textSizes[position]
+                    callback(selectedTextSize)
+                }
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextSizeViewHolder {
-        return TextSizeViewHolder(TextView(parent.context).apply { setPadding(5, 20, 0, 20) })
+        return TextSizeViewHolder(TextView(parent.context).apply { setPadding(5, 20, 0, 20) }, callback)
     }
 
     override fun onBindViewHolder(holder: TextSizeViewHolder, position: Int) {
